@@ -581,7 +581,7 @@ bool isAnyoneWithinAggroRadius(CBlob@ this)
     getMap().getBlobsInRadius(this.getPosition(), aggro_radius, blobs);
     for (u8 i = 0; i < blobs.length; i++)
     {
-        if (blobs[i].hasTag("player"))
+        if (isValidTarget(this, blobs[i]))
             return true;
     }
 
@@ -598,12 +598,7 @@ void pickClosestPlayer(CBlob@ this)
     for (u8 i = 0; i < players.length; i++)
     {
         CBlob@ player = players[i];
-        
-        // Don't consider players not in the eagle's territory
-        Vec2f pos = player.getPosition();
-        if (pos.x < this.get_f32("territory left boundary")
-                || pos.x > this.get_f32("territory right boundary")
-                || player.isInWater())
+        if (!isValidTarget(this, player))
             continue;
         else
         {
@@ -721,4 +716,17 @@ int getHeightAboveLand(CBlob@ this)
     float height = getMap().getLandYAtX(x) - this.getPosition().y/getMap().tilesize;
     //log("getHeightAboveLand", "Returning " + height);
     return height;
+}
+
+bool isValidTarget(CBlob@ this, CBlob@ blob)
+{
+    Vec2f pos = blob.getPosition();
+    if (pos.x < this.get_f32("territory left boundary")
+            || pos.x > this.get_f32("territory right boundary")
+            || blob.isInWater()
+            || blob.isAttached()
+            || (!blob.hasTag("player")))
+        return false;
+    else
+        return true;
 }

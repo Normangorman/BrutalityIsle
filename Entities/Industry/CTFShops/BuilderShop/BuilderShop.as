@@ -41,7 +41,7 @@ void onInit(CBlob@ this)
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Boulder", "$boulder$", "boulder", descriptions[17], false);
-		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", 35);
+		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", COST_STONE_BOULDER);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Trampoline", "$trampoline$", "trampoline", descriptions[30], false);
@@ -50,22 +50,16 @@ void onInit(CBlob@ this)
 	{
 		ShopItem@ s = addShopItem(this, "Saw", "$saw$", "saw", descriptions[12], false);
 		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", COST_WOOD_SAW);
-		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", 100);
+		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", COST_STONE_SAW);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Drill", "$drill$", "drill", descriptions[43], false);
 		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", COST_STONE_DRILL);
-		AddRequirement(s.requirements, "coin", "", "Coins", 25);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Waterproof Lantern", "$waterproof_lantern$", "waterproof_lantern", descriptions[61], false);
 		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", COST_WOOD_WATERPROOF_LANTERN);
 		AddRequirement(s.requirements, "blob", "mat_purple_gold", "Purple Gold", COST_PURPLE_GOLD_WATERPROOF_LANTERN);
-	}
-    {
-		ShopItem@ s = addShopItem(this, "Sparkwood Arrows", "$mat_firearrows$", "mat_firearrows", descriptions[32], true);
-		AddRequirement(s.requirements, "coin", "", "Coins", COST_SPARKWOOD_ARROWS);
-		AddRequirement(s.requirements, "blob", "mat_sparkwood", "Sparkwood", COST_SPARKWOOD_SPARKWOOD_ARROWS);
 	}
 }
 

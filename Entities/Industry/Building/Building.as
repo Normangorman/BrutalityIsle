@@ -29,12 +29,6 @@ void onInit(CBlob@ this)
 		ShopItem@ s = addShopItem(this, "Builder Shop", "$buildershop$", "buildershop", descriptions[54]);
 		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", COST_WOOD_FACTORY);
 	}
-    /*
-	{
-		ShopItem@ s = addShopItem(this, "Quarters", "$quarters$", "quarters", descriptions[59]);
-		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", COST_WOOD_FACTORY);
-	}
-    */
 	{
 		ShopItem@ s = addShopItem(this, "Knight Shop", "$knightshop$", "knightshop", descriptions[55]);
 		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", COST_WOOD_FACTORY);
@@ -45,24 +39,24 @@ void onInit(CBlob@ this)
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Boat Shop", "$boatshop$", "boatshop", descriptions[58]);
-		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", 100);
-		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 50);
+		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", COST_WOOD_BOATSHOP);
+		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", COST_GOLD_BOATSHOP);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Vehicle Shop", "$vehicleshop$", "vehicleshop", descriptions[57]);
-		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", 100);
-		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 50);
+		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", COST_WOOD_VEHICLESHOP);
+		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", COST_GOLD_VEHICLESHOP);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Storage Cache", "$storage$", "storage", descriptions[60]);
-		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", 50);
-		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", 50);
+		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", COST_STONE_STORAGE);
+		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", COST_WOOD_STORAGE);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Transport Tunnel", "$tunnel$", "tunnel", descriptions[34]);
-		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", 100);
-		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", 50);
-		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 50);
+		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", COST_STONE_TUNNEL);
+		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", COST_WOOD_TUNNEL);
+		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", COST_GOLD_TUNNEL);
 	}
 }
 
