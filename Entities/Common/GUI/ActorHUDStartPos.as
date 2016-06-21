@@ -7,7 +7,7 @@ const f32 HUD_Y = getScreenHeight();
 Vec2f getActorHUDStartPosition(CBlob@ blob, const u8 bar_width_in_slots)
 {
 	f32 width = bar_width_in_slots * 32.0f;
-	return Vec2f(HUD_X + 160 + 50 - width, HUD_Y - 40);
+	return Vec2f(HUD_X + 160 + 150 - width, HUD_Y - 40);
 }
 
 void DrawInventoryOnHUD(CBlob@ this, Vec2f tl)

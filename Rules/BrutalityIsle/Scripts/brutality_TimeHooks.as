@@ -8,6 +8,7 @@ void onInit(CRules@ this)
     this.set_u32("game added time", 0);
     this.set_u16("start day number", 1); // useful to change for testing
     this.set_bool("is night", false);
+    this.set_bool("sent midnight hook", false);
 }
 
 void onTick(CRules@ this)
@@ -33,6 +34,13 @@ void onTick(CRules@ this)
     {
         this.set_bool("is night", false);
         sendAlert(this, "daytime_hook");
+        this.set_bool("sent midnight hook", false);
+    }
+
+    if (t < 0.05 && (!this.get_bool("sent midnight hook")))
+    {
+        this.set_bool("sent midnight hook", true);
+        sendAlert(this, "midnight_hook");
     }
 }
 

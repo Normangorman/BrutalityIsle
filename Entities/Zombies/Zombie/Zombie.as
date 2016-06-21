@@ -26,7 +26,6 @@ class HitData
 
 void onInit(CBlob@ this)
 {
-
     //log("onInit(CBlob)", "Hook called");
 	//for EatOthers
 	string[] tags = {"player","lantern"};
@@ -99,9 +98,21 @@ void onTick(CBlob@ this)
             this.SetFacingLeft(direction.x < 0);
         }
 
-        u8 climb_state = tryClimbing(this, direction);
+        u8 old_climb_state    = this.get_u8("climb state");
+        bool already_climbing = old_climb_state != CLIMB_STATE_NOT_CLIMBING;
+        u8 new_climb_state    = CLIMB_STATE_NOT_CLIMBING;
 
-        if (climb_state == CLIMB_STATE_NOT_CLIMBING)
+        if (this.isInWater())
+        {
+            this.AddForce(Vec2f(0, direction.y < 0 ? -runForce : runForce));
+        }
+        else if (already_climbing || getGameTime() % 20 == 0)
+        {
+            // If we're already climbing then update every tick, else update every 20 ticks to save CPU
+            new_climb_state = tryClimbing(this, direction);
+        }
+
+        if (new_climb_state == CLIMB_STATE_NOT_CLIMBING)
         {
             if (direction.x > 0)
             {
@@ -139,12 +150,12 @@ void onTick(CBlob@ this)
         // Scan in a radius around the zombie
         // Use its direction of movement to determine which blocks to break
         // Only dig when climbing is suspended or above the target
-        if ((climb_state == CLIMB_STATE_SUSPENDED
-                    || (climb_state == CLIMB_STATE_NOT_CLIMBING && direction.y > 0)
+        if ((new_climb_state == CLIMB_STATE_SUSPENDED
+                    || (new_climb_state == CLIMB_STATE_NOT_CLIMBING && direction.y > 0)
             )
                 && getGameTime() % 10 == 0
                 && XORRandom(dig_chance) == 0
-                )
+           )
         {	
             //log("onTick", "Doing block break");
             Dig(this, direction);
@@ -483,23 +494,24 @@ u8 tryClimbing(CBlob@ this, Vec2f direction)
     float ty = tilepos.y;
     int   ts = map.tilesize;
 
-    bool blockLeft        = map.isTileSolid(Vec2f(tx-ts, ty     ));
-    bool blockRight       = map.isTileSolid(Vec2f(tx+ts, ty     ));
-    bool blockTopLeft     = map.isTileSolid(Vec2f(tx-ts, ty-ts  ));
-    bool blockTopTopLeft  = map.isTileSolid(Vec2f(tx-ts, ty-ts*2));
-    bool blockTopRight    = map.isTileSolid(Vec2f(tx+ts, ty-ts  ));
-    bool blockTopTopRight = map.isTileSolid(Vec2f(tx+ts, ty-ts*2));
-    bool blockAbove       = map.isTileSolid(Vec2f(tx   , ty-ts  ));
-    bool blockAboveTop    = map.isTileSolid(Vec2f(tx   , ty-ts*2));
-    bool blockBelow       = map.isTileSolid(Vec2f(tx   , ty+ts  ));
-    bool blockBotLeft     = map.isTileSolid(Vec2f(tx-ts, ty+ts  ));
-    bool blockBotRight    = map.isTileSolid(Vec2f(tx+ts, ty+ts  ));
+    bool blockLeft        = IsTileClimbable(Vec2f(tx-ts, ty     ));
+    bool blockRight       = IsTileClimbable(Vec2f(tx+ts, ty     ));
+    bool blockTopLeft     = IsTileClimbable(Vec2f(tx-ts, ty-ts  ));
+    bool blockTopTopLeft  = IsTileClimbable(Vec2f(tx-ts, ty-ts*2));
+    bool blockTopRight    = IsTileClimbable(Vec2f(tx+ts, ty-ts  ));
+    bool blockTopTopRight = IsTileClimbable(Vec2f(tx+ts, ty-ts*2));
+    bool blockAbove       = IsTileClimbable(Vec2f(tx   , ty-ts  ));
+    bool blockAboveTop    = IsTileClimbable(Vec2f(tx   , ty-ts*2));
+    bool blockBelow       = IsTileClimbable(Vec2f(tx   , ty+ts  ));
+    bool blockBotLeft     = IsTileClimbable(Vec2f(tx-ts, ty+ts  ));
+    bool blockBotRight    = IsTileClimbable(Vec2f(tx+ts, ty+ts  ));
 
     Vec2f up    = Vec2f(0.0, -climbForce);
     Vec2f left  = Vec2f(-climbForce, 0.0);
     Vec2f right = Vec2f(climbForce, 0.0);
 
     u8 old_climb_state = this.get_u8("climb state");
+    bool already_climbing = old_climb_state != CLIMB_STATE_NOT_CLIMBING;
     u8 climb_state = CLIMB_STATE_NOT_CLIMBING;
 
     // Key: 0=air, #=block, ?=maybe block, Z=zombie
@@ -526,8 +538,8 @@ u8 tryClimbing(CBlob@ this, Vec2f direction)
 
     bool clearLeft = (!blockLeft) && (!blockBotLeft);
 
-    if (   direction.x > 0 && (canWalkRight || (old_climb_state == CLIMB_STATE_NOT_CLIMBING) && clearRight)
-        || direction.x < 0 && (canWalkLeft  || (old_climb_state == CLIMB_STATE_NOT_CLIMBING) && clearLeft))
+    if (   direction.x > 0 && (canWalkRight || (!already_climbing) && clearRight)
+        || direction.x < 0 && (canWalkLeft  || (!already_climbing) && clearLeft))
     {
         //log("tryClimbing", "Not climbing because walking is possible");
     }
@@ -584,9 +596,9 @@ u8 tryClimbing(CBlob@ this, Vec2f direction)
 
                     Vec2f overhangTilepos = Vec2f(x, ty-8);
                     Vec2f climbTilepos    = Vec2f(x, ty);
-                    if (map.isTileSolid(climbTilepos)) // this tile would be impassible
+                    if (IsTileClimbable(climbTilepos)) // this tile would be impassible
                         break;
-                    else if (map.isTileSolid(overhangTilepos))
+                    else if (IsTileClimbable(overhangTilepos))
                         continue;
                     else // there's space to get up
                     {
@@ -611,9 +623,9 @@ u8 tryClimbing(CBlob@ this, Vec2f direction)
 
                         Vec2f overhangTilepos = Vec2f(x, ty-8);
                         Vec2f climbTilepos    = Vec2f(x, ty);
-                        if (map.isTileSolid(climbTilepos)) // this tile would be impassible
+                        if (IsTileClimbable(climbTilepos)) // this tile would be impassible
                             break;
-                        else if (map.isTileSolid(overhangTilepos))
+                        else if (IsTileClimbable(overhangTilepos))
                             continue;
                         else // there's space to get up
                         {
@@ -748,4 +760,30 @@ void centreInTile(CBlob@ this)
     p.x = round_tp.x * map.tilesize + x_margin;
     p.y = round_tp.y * map.tilesize + y_margin;
     this.setPosition(p);
+}
+
+bool IsTileClimbable(Vec2f pos)
+{
+    CMap@ map = getMap();
+
+    if (map.isTileSolid(pos))
+        return true;
+    else
+    {
+        // Check for climbable blobs
+        // i.e. doors
+        CBlob@[] blobs; 
+        map.getBlobsAtPosition(pos, blobs);
+
+        for (u8 i = 0; i < blobs.length; i++)
+        {
+            string name = blobs[i].getName();
+            if (name == "stone_door" || name == "wooden_door")
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }

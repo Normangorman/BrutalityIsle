@@ -16,6 +16,7 @@ void onInit(CBlob@ this)
 	vars.last_grew_time = getGameTime() - 1; //pretend we started a frame ago ;)
 	InitTree(this, vars);
 	this.set("TreeVars", vars);
+
 }
 
 void GrowSprite(CSprite@ this, TreeVars@ vars)

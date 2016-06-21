@@ -10,6 +10,7 @@ void onInit(CBlob@ this)
 {
     log("onInit", "Hook called");
     this.set_string("storm_music", "../Mods/" + getModname() + "/Entities/Meta/Storms/gravity.ogg");
+    this.set_u8("duration secs", 180);
 }
 
 void onTick(CBlob@ this)

@@ -13,6 +13,7 @@ const u8 FLY_STATE_GLIDING      = 1;
 const float horizontal_vel = 10.0;
 const float max_horizontal_vel = 20.0;
 const float flap_vel = 360.0;
+const float aggro_radius = 80.0;
 //const u32 delay_between_flaps = 15;
 const u32 wing_flap_sound_time = 120;
 const float target_reached_radius = 25.0;
@@ -22,8 +23,8 @@ const int max_target_pos_offset_from_sky = 42;
 const int flap_wings_down_frame = 2;
 const int flap_talons_wings_down_frame = 8;
 const int territory_width = 80;
-const int drop_held_target_p = 200; 
-const int max_drop_height = 40; // in tiles 
+const int drop_held_target_p = 100; 
+//const int max_drop_height = 40; // in tiles 
 
 const int min_state_time = 100; // remain in any state for at least this many ticks
 const int state_transition_p = 260;
@@ -34,7 +35,6 @@ void onInit(CBlob@ this)
 {
     log("onInit(Blob)", "Hook called");
     Sound::Play("GregCry.ogg", this.getPosition());
-
 
     this.set_u8("number of steaks", 5);
     this.set_u8("state", STATE_SOARING);
@@ -128,7 +128,8 @@ void onTick(CBlob@ this)
         {
             if (this.get_bool("holding target"))
             {
-                if ((eagleRand.NextRanged(drop_held_target_p) == 0) && (getHeightAboveLand(this) < max_drop_height))
+                //if ((eagleRand.NextRanged(drop_held_target_p) == 0) && (getHeightAboveLand(this) < max_drop_height))
+                if (eagleRand.NextRanged(drop_held_target_p) == 0)
                 {
                     log("onTick", "Dropping player from a height of " + getHeightAboveLand(this));
                     this.server_DetachAll();
@@ -343,7 +344,8 @@ void doRandomStateTransitions(CBlob@ this)
         }
         else
         {
-            changeState(this, STATE_ATTACKING);
+            if (isAnyoneWithinAggroRadius(this))
+                changeState(this, STATE_ATTACKING);
         }
     }
     else if (state == STATE_TRYING_TO_PERCH)
@@ -420,7 +422,7 @@ void changeState(CBlob@ this, u8 new_state)
     }
     else if (new_state == STATE_ATTACKING)
     {
-        pickRandPlayer(this);
+        pickClosestPlayer(this);
         set_emote(this, Emotes::skull);
     }
 
@@ -573,44 +575,56 @@ void pickRandTargetPos(CBlob@ this)
     */
 }
 
-void pickRandPlayer(CBlob@ this)
+bool isAnyoneWithinAggroRadius(CBlob@ this)
+{
+    CBlob@[] blobs;
+    getMap().getBlobsInRadius(this.getPosition(), aggro_radius, blobs);
+    for (u8 i = 0; i < blobs.length; i++)
+    {
+        if (blobs[i].hasTag("player"))
+            return true;
+    }
+
+    return false;
+}
+
+void pickClosestPlayer(CBlob@ this)
 {
     CBlob@[] players;
     getBlobsByTag("player", players);
 
-    // Remove players not in the eagle's territory
-    for (int i = players.length()-1; i >= 0; i--)
+    u16 closest_player_pid = 0;
+    float closest_distance = 1000.0;
+    for (u8 i = 0; i < players.length; i++)
     {
-        Vec2f pos = players[i].getPosition();
+        CBlob@ player = players[i];
+        
+        // Don't consider players not in the eagle's territory
+        Vec2f pos = player.getPosition();
         if (pos.x < this.get_f32("territory left boundary")
                 || pos.x > this.get_f32("territory right boundary")
-                || players[i].isInWater())
-            players.removeAt(i);
+                || player.isInWater())
+            continue;
+        else
+        {
+            if (this.getDistanceTo(player) < closest_distance)
+            {
+                closest_distance = this.getDistanceTo(player);
+                closest_player_pid = player.getNetworkID();
+            }
+        }
     }
 
-    if(players.size() == 0)
+    if(closest_player_pid == 0)
     {
-        log("pickRandPlayer", "No suitable target found");
-        this.set_u16("target blob netid", 0);
+        log("pickClosestPlayer", "WARNING: Closest player is null. Maybe no players are within territory bounds?");
     }
     else
     {
-        u16 id = players[eagleRand.Next()%players.size()].getNetworkID();
-        this.set_u16("target blob netid", id);
-        log("pickRandPlayer", "Chose player with netID: " + id);
-    }
-}
-
-CBlob@ getTarget(CBlob@ this)
-{
-    if(this.get_bool("no target") || this.get_bool("use pos"))
-    {
-        return null;
+        log("pickClosestPlayer", "Chose player with netID: " + closest_player_pid);
     }
 
-    u16 targetId = this.get_u16("targetId");
-    CBlob@ target = getBlobByNetworkID(targetId);
-    return target;
+    this.set_u16("target blob netid", closest_player_pid);
 }
 
 void onCollision( CBlob@ this, CBlob@ blob, bool solid )

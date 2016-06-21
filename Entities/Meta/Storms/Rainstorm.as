@@ -14,8 +14,10 @@ void onInit(CBlob@ this)
 
     this.set_s8("direction", direction);
     this.set_string("storm_music", "../Mods/" + getModname() + "/Entities/Meta/Storms/heavy_rain.ogg");
-    this.set_Vec2f("particle_ar", particle_ar);
-    this.set_Vec2f("particle_gb", particle_gb);
+    //this.set_Vec2f("particle_ar", particle_ar);
+    //this.set_Vec2f("particle_gb", particle_gb);
+
+    this.set_u8("duration secs", 120);
 }
 
 void onTick(CBlob@ this)

@@ -4,6 +4,10 @@
 #include "Hitters.as";
 #include "Logging.as";
 #include "PlantGrowthCommon.as";
+#include "brutality_Time.as";
+
+const u8 MUSHROOM_GROWTH_TIME = 20; // tick frequency for growth script
+const u8 MUSHROOM_GROWTH_DAYS = 2; // on average fully grown after 2 days
 
 void onInit(CBlob@ this)
 {
@@ -13,7 +17,8 @@ void onInit(CBlob@ this)
 	this.getCurrentScript().tickFrequency = 45;
 	this.getSprite().SetZ(10.0f);
 
-    this.set_u8(growth_chance, 5);
+    this.set_u8(growth_time, MUSHROOM_GROWTH_TIME);
+    this.set_u8(growth_chance, getDayDurationTicks() * MUSHROOM_GROWTH_DAYS * MUSHROOM_GROWTH_TIME); 
 
 	// this script gets removed so onTick won't be run on client on server join, just onInit
 	if (this.hasTag("instant_grow"))

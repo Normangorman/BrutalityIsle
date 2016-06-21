@@ -16,6 +16,8 @@ void onInit(CBlob@ this)
     this.set_string("storm_music", "../Mods/" + getModname() + "/Entities/Meta/Storms/Hailstorm.ogg");
     this.set_Vec2f("particle_ar", particle_ar); // set_SColor doesn't exist so this is a workaround
     this.set_Vec2f("particle_gb", particle_gb); // blah
+
+    this.set_u8("duration secs", 60);
 }
 
 void onTick(CBlob@ this)

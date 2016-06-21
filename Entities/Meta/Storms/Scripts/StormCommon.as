@@ -1,6 +1,5 @@
 const int warning_delay_time_secs = 30;
-const int min_duration_secs = 20;
-const int max_duration_secs = 30;
+const int max_duration_secs = 180;
 
 Vec2f getRandomHailstonePos()
 {

@@ -1,4 +1,5 @@
 #include "Logging.as"
+#include "brutality_Time.as"
 #include "StormCommon.as"
 
 int spawn_storm_chance = 140;
@@ -7,13 +8,13 @@ int last_storm_start_time;
 void onInit(CBlob@ this)
 {
     log("onInit", "Hook called");
-    this.getCurrentScript().tickFrequency = 20;
+    this.getCurrentScript().tickFrequency = 500;
     last_storm_start_time = getGameTime();
 }
 
 void onTick(CBlob@ this)
 {
-    if (!getNet().isServer())
+    if ((!getNet().isServer()) || isNight()) // don't spawn storms at night
         return;
 
     int time_since_last_storm_secs = (getGameTime() - last_storm_start_time)/getTicksASecond();
