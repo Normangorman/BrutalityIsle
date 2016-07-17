@@ -1,6 +1,7 @@
 ﻿#include "Hitters.as"
 #include "Logging.as";
 #include "BuilderHittable.as";
+#include "Knocked.as";
 
 const u8 CLIMB_STATE_NOT_CLIMBING   = 0;
 const u8 CLIMB_STATE_SIMPLE         = 1;
