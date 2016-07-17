@@ -61,6 +61,11 @@ void onInit(CBlob@ this)
 		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", COST_WOOD_WATERPROOF_LANTERN);
 		AddRequirement(s.requirements, "blob", "mat_purple_gold", "Purple Gold", COST_PURPLE_GOLD_WATERPROOF_LANTERN);
 	}
+	{
+		ShopItem@ s = addShopItem(this, "Diving Helmet", "$divinghelmet$", "divinghelmet", descriptions[62], false);
+		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", COST_STONE_DIVING_HELMET);
+		AddRequirement(s.requirements, "blob", "mat_purple_gold", "Purple Gold", COST_PURPLE_GOLD_DIVING_HELMET);
+	}
 }
 
 void GetButtonsFor(CBlob@ this, CBlob@ caller)

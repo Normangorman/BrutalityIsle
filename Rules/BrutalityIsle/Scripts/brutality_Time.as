@@ -2,8 +2,8 @@
 
 const float night_begin = 0.875;
 const float day_begin = 0.25;
-const f32 starvation_damage = 0.25;
-const int starvation_frequency_ticks = 600; // about once a minute 
+const f32 starvation_damage = 0.5;
+const int starvation_frequency_ticks = 1200; // about once every 2 mins 
 
 /*
 void addVirtualHoursToGameTime(int num_hours)

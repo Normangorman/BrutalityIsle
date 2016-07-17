@@ -57,6 +57,7 @@ void onInit(CBlob@ this)
 	this.set_f32("bite damage", 1.5f);
 
     // for AnimalBrain
+    this.set_f32("swimspeed", 0.5f);
 	this.set_u32("min swim depth", 15);
 
 	//for aquatic animal

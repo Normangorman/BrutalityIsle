@@ -30,6 +30,8 @@ const uint COST_WOOD_SAW = 150;
 const uint COST_STONE_SAW = 100;
 const uint COST_STONE_DRILL = 100;
 const uint COST_STONE_BOULDER = 35;
+const uint COST_STONE_DIVING_HELMET = 50;
+const uint COST_PURPLE_GOLD_DIVING_HELMET = 50;
 
 // Arrows
 const uint COST_STONE_ARROWS = 25;

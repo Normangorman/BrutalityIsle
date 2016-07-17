@@ -63,6 +63,32 @@ void onTick(CBlob@ this)
     //log("onTick(CBlob)", "Hook called");
     if (this.hasTag("dead"))
         return;
+    else
+    {
+        DoKnockedUpdate(this);
+
+        if (isKnocked(this))
+            return;
+    }
+
+    /*
+    if (!this.hasAttached())
+    {
+        CBlob@ collider = getBlobByNetworkID(this.get_netid("zombie collider netid"));
+        if (collider is null)
+        {
+            log("onTick", "collider is null");
+        }
+        else if (this.server_Pickup(collider))
+        {
+            log("onTick", "Picked up collider");
+        }
+        else
+        {
+            log("onTick", "Failed to pick up collider");
+        }
+    }
+    */
 
     if (!hasTarget(this))
     {
@@ -102,7 +128,7 @@ void onTick(CBlob@ this)
         bool already_climbing = old_climb_state != CLIMB_STATE_NOT_CLIMBING;
         u8 new_climb_state    = CLIMB_STATE_NOT_CLIMBING;
 
-        if (this.isInWater())
+        if (this.isInWater() && !this.isOnWall())
         {
             this.AddForce(Vec2f(0, direction.y < 0 ? -runForce : runForce));
         }
@@ -209,9 +235,19 @@ void onTick(CSprite@ this)
 		}
 		else if (Maths::Abs(x) > 0.1f)
 		{
-			if (!this.isAnimation("walk"))
+            string move_anim = "walk";
+            if (Maths::Abs(x) > 0.5f)
             {
-				this.SetAnimation("walk");
+                if (Maths::Abs(x) > 1.0f)
+                    move_anim = "rush";
+                else
+                    move_anim = "run";
+            }
+                
+			if (!this.isAnimation(move_anim))
+            {
+                log("onTick(CSprite)", "Changing to " + move_anim);
+				this.SetAnimation(move_anim);
 			}
 		}
 		else
@@ -270,6 +306,7 @@ f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hit
     {
         this.Tag("dead");
         this.getShape().SetGravityScale(1.0); // fixes bug where gravity is still 0 from climbing
+        this.getShape().setFriction(0.75);
         log("onHit", "Damage was fatal");
     }
 

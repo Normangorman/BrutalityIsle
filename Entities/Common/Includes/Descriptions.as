@@ -66,4 +66,5 @@ const string[] descriptions =
 	/* 59  */               "Place of merriment and healing",         // quarters/inn
 	/* 60  */               "A Cache for storing your materials, items and armaments.",         // storage cache
 	/* 61  */               "Waterproof lanterns help with underwater exploration.",                         // lantern
+	/* 62  */               "Diving helmets allow you to hold your breath for much longer."
 };

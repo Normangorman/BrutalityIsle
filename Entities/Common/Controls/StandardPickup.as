@@ -1,6 +1,7 @@
 // Standard menu player controls
 // add to blob and sprite
 // Brutality Isle modded to add purple gold
+// also to make zombie corpses more likely to be picked up
 
 #include "StandardControlsCommon.as"
 #include "ThrowCommon.as"
@@ -213,7 +214,7 @@ f32 getPriorityPickupScale(CBlob@ this, CBlob@ b, f32 scale)
 	// super low priority
 	// dead stuff, sick of picking up corpses
 	{
-		if (b.hasTag("dead"))
+		if (b.hasTag("dead") && (name != "zombie"))
 		{
 			scale *= 10.0f;
 		}

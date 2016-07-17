@@ -36,7 +36,7 @@ void onInit(CBlob@ this)
     log("onInit(Blob)", "Hook called");
     Sound::Play("GregCry.ogg", this.getPosition());
 
-    this.set_u8("number of steaks", 5);
+    this.set_u8("number of steaks", 2);
     this.set_u8("state", STATE_SOARING);
     this.set_u8("fly state", FLY_STATE_GLIDING);
     this.set_u32("last wing sound time", 0);

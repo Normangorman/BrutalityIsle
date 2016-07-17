@@ -11,6 +11,8 @@ void onInit(CBlob@ this)
 	this.Tag("place norotate");
 	this.Tag("stone"); // Brutality Isle might not want this?
 	this.Tag("large");
+
+    AddIconToken("$mat_purple_gold$", "MaterialPurpleGold.png", Vec2f(16,16), 2);
 }
 
 bool canBePickedUp( CBlob@ this, CBlob@ byBlob )

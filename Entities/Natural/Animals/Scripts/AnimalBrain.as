@@ -250,7 +250,7 @@ void onTick(CBrain@ this)
 		}
 
 
-        if (getGameTime() % 10 == 0 && blob.isInWater() && (blob.exists("max swim depth") || blob.exists("min swim depth")))
+        if (blob.isInWater() && (blob.exists("max swim depth") || blob.exists("min swim depth")))
         {
             CMap@ map = getMap();
             Vec2f pos = blob.getPosition();
@@ -282,10 +282,13 @@ void onTick(CBrain@ this)
                 u32 min = blob.get_u32("min swim depth");
 
                 // No point hugging the bottom of the ocean floor if we can't go lower
-                if (swimdepth < min && min < max_swimdepth)
+                if (swimdepth < min)
                 {
                     blob.setKeyPressed(key_up, false);
                     blob.setKeyPressed(key_down, true);
+
+                    if (blob.get_u8(state_property) == MODE_TARGET)
+                        blob.set_u8(state_property, MODE_IDLE);
                 }
             }
 
@@ -297,6 +300,9 @@ void onTick(CBrain@ this)
                 {
                     blob.setKeyPressed(key_up, true);
                     blob.setKeyPressed(key_down, false);
+
+                    if (blob.get_u8(state_property) == MODE_TARGET)
+                        blob.set_u8(state_property, MODE_IDLE);
                 }
             }
         }

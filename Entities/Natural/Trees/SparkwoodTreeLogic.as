@@ -1,6 +1,9 @@
 // Pine tree Logic
 
 #include "TreeSync.as"
+#include "TreeCommon.as"
+
+const u8 spawn_sparkfruit_chance = 5;
 
 void onInit(CBlob@ this)
 {
@@ -17,6 +20,7 @@ void onInit(CBlob@ this)
 	InitTree(this, vars);
 	this.set("TreeVars", vars);
 
+    AddIconToken("$mat_sparkwood$", "MaterialSparkwood.png", Vec2f(16,16), 1);
 }
 
 void GrowSprite(CSprite@ this, TreeVars@ vars)
@@ -196,4 +200,20 @@ void GrowSprite(CSprite@ this, TreeVars@ vars)
 			}
 		}
 	}
+}
+
+void onDie(CBlob@ this)
+{
+    // Spawn some sparkfruit
+    // Use treesegments to see how much the tree has grown
+    TreeSegment[]@ segments;
+    this.get("TreeSegments", @segments);
+    if (segments is null)
+        return;
+
+    for (u8 i=0; i < segments.length; i++)
+    {
+        if (XORRandom(spawn_sparkfruit_chance) == 0)
+            server_CreateBlob("sparkfruit", this.getTeamNum(), this.getPosition());
+    }
 }
